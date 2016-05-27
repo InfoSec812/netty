@@ -412,17 +412,22 @@ abstract class DnsNameResolverContext<T> {
         final int tries = maxAllowedQueries - allowedQueries;
         final StringBuilder buf = new StringBuilder(64);
 
-        buf.append("failed to resolve ");
+        buf.append("failed to resolve '");
         buf.append(hostname);
+        buf.append('\'');
 
         if (tries > 1) {
-            buf.append(" after ");
-            buf.append(tries);
-            if (trace != null) {
-                buf.append(" queries:");
-                buf.append(trace);
-            } else {
+            if (tries < maxAllowedQueries) {
+                buf.append(" after ");
+                buf.append(tries);
                 buf.append(" queries");
+            } else {
+                buf.append(". Exceeded max queries per resolve ").append(maxAllowedQueries);
+            }
+
+            if (trace != null) {
+                buf.append(" :");
+                buf.append(trace);
             }
         } else {
             if (trace != null) {
